@@ -7,7 +7,7 @@ import (
 	"github.com/taufiq30s/adzan/internal/utils"
 )
 
-func generateDate(alpha float64, beta float64, b float64) utils.DateComponents {
+func generateDate(b float64) utils.DateComponents {
 	c := math.Floor((b - 122.1) / 365.25)
 	d := math.Floor(365.25 * c)
 	e := math.Floor((b - d) / 30.6001)
@@ -68,7 +68,7 @@ func ConvertHijrToGeorgian(date *utils.DateComponents) (utils.DateComponents, er
 		beta = JD + 1 + alpha - math.Floor(alpha/4)
 	}
 	b := beta + 1524
-	return generateDate(alpha, beta, b), nil
+	return generateDate(b), nil
 }
 
 func ConvertGeorgianToHijr(date utils.DateComponents) utils.DateComponents {
@@ -83,7 +83,7 @@ func ConvertGeorgianToHijr(date utils.DateComponents) utils.DateComponents {
 	b := math.Floor(365.25*float64(date.Year)) +
 		math.Floor(30.6001*(float64(date.Month)+1)) +
 		float64(date.Day) + 1722519 + beta
-	julianDate := generateDate(alpha, beta, b)
+	julianDate := generateDate(b)
 
 	W := 1.0
 	if julianDate.Year%4 > 0 {
@@ -97,7 +97,7 @@ func ConvertGeorgianToHijr(date utils.DateComponents) utils.DateComponents {
 	C := math.Mod(A, 4)
 	C1 := 365.2501 * C
 	C2 := math.Floor(C1)
-	if C1-C2 > 0.5 {
+	if (C1 - C2) > 0.5 {
 		C2++
 	}
 	D := 1461*B + 170 + C2
@@ -111,18 +111,20 @@ func ConvertGeorgianToHijr(date utils.DateComponents) utils.DateComponents {
 
 	// Check Hijr is Leap year or not and substract it
 	// with 354 if common year and 355 if leap year
-	CL := math.Mod(H, 30)
-	DL := math.Mod((11*CL)+3, 30)
-	if DL < 19 {
-		JJ -= 354
-	} else {
-		JJ -= 355
-	}
-	H++
+	if JJ > 354 {
+		CL := math.Mod(H, 30)
+		DL := math.Mod((11*CL)+3, 30)
+		if DL < 19 {
+			JJ -= 354
+		} else {
+			JJ -= 355
+		}
+		H++
 
-	if JJ == 0 {
-		JJ += 355
-		H--
+		if JJ == 0 {
+			JJ += 355
+			H--
+		}
 	}
 
 	// Convert Month and Day from day Number JJ
