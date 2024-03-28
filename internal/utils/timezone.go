@@ -11,9 +11,10 @@ import (
 )
 
 type TimeZone struct {
-	Time       string `json:"time"`
-	GmtOffset  int8   `json:"gmtOffset"`
-	TimezoneId string `json:"timezoneId"`
+	Time        string `json:"time"`
+	GmtOffset   int8   `json:"gmtOffset"`
+	TimezoneId  string `json:"timezoneId"`
+	CountryCode string `json:"countryCode"`
 }
 
 const uri string = "http://api.geonames.org/timezoneJSON?lat=%f&lng=%f&username=%s"
@@ -31,7 +32,6 @@ func GetTimeZone(lat float64, lng float64) (timezone *TimeZone, statusCode int, 
 	}
 
 	url := fmt.Sprintf(uri, lat, lng, username)
-	fmt.Println(url)
 	go func() {
 		tz := TimeZone{}
 		res, e := http.Get(url)

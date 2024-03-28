@@ -59,35 +59,35 @@ func GetCalculationMethod(method CalculationMethod) *CalculationParameters {
 	param := NewCalculationParameter()
 	switch method {
 	case MUSLIM_WORLD_LEAGUE:
-		param.setFajrAngle(18.0).setIshaAngle(17.0).setMethodAjustment(PrayerAjustment{
+		param.SetFajrAngle(18.0).SetIshaAngle(17.0).SetMethodAjustment(PrayerAjustment{
 			Dhuhr: 1,
 		})
 	case EGYPTIAN:
-		param.setFajrAngle(19.5).setIshaAngle(17.5).setMethodAjustment(PrayerAjustment{
+		param.SetFajrAngle(19.5).SetIshaAngle(17.5).SetMethodAjustment(PrayerAjustment{
 			Dhuhr: 1,
 		})
 	case NORTH_AMERICA:
-		param.setFajrAngle(15.0).setIshaAngle(15.0).setMethodAjustment(PrayerAjustment{
+		param.SetFajrAngle(15.0).SetIshaAngle(15.0).SetMethodAjustment(PrayerAjustment{
 			Dhuhr: 1,
 		})
 	case UOIF:
-		param.setFajrAngle(12.0).setIshaAngle(12.0)
+		param.SetFajrAngle(12.0).SetIshaAngle(12.0)
 	case UMM_AL_QURRA:
-		param.setFajrAngle(18.5).setIshaInterval(90)
+		param.SetFajrAngle(18.5).SetIshaInterval(90)
 	case KARACHI:
-		param.setFajrAngle(18.0).setIshaAngle(18.0).setMethodAjustment(PrayerAjustment{
+		param.SetFajrAngle(18.0).SetIshaAngle(18.0).SetMethodAjustment(PrayerAjustment{
 			Dhuhr: 1,
 		})
 	case SINGAPORE:
-		param.setFajrAngle(20.0).setIshaAngle(18.0).setMethodAjustment(PrayerAjustment{
+		param.SetFajrAngle(20.0).SetIshaAngle(18.0).SetMethodAjustment(PrayerAjustment{
 			Dhuhr: 1,
 		})
 	case KUWAIT:
-		param.setFajrAngle(18.0).setIshaAngle(17.5)
+		param.SetFajrAngle(18.0).SetIshaAngle(17.5)
 	case QATAR:
-		param.setFajrAngle(18.0).setIshaInterval(90)
+		param.SetFajrAngle(18.0).SetIshaInterval(90)
 	case KEMENAG:
-		param.setFajrAngle(20.0).setIshaAngle(18.0).setMethodAjustment(PrayerAjustment{
+		param.SetFajrAngle(20.0).SetIshaAngle(18.0).SetMethodAjustment(PrayerAjustment{
 			Fajr:   2,
 			Dhuhr:  2,
 			Asr:    2,
@@ -95,7 +95,7 @@ func GetCalculationMethod(method CalculationMethod) *CalculationParameters {
 			Isha:   2,
 		})
 	case MUHAMMADIYAH:
-		param.setFajrAngle(18.0).setIshaAngle(18.0).setMethodAjustment(PrayerAjustment{
+		param.SetFajrAngle(18.0).SetIshaAngle(18.0).SetMethodAjustment(PrayerAjustment{
 			Fajr:   2,
 			Dhuhr:  2,
 			Asr:    2,

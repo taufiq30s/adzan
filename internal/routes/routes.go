@@ -9,6 +9,7 @@ import (
 func NewRoute() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/hijr", api.ShowCurrentHijrDate)
+	mux.HandleFunc("/adzan", api.TodayAdzan)
 	return mux
 }
 

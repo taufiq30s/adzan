@@ -29,7 +29,6 @@ func NewSolarTime(date *utils.DateComponents, coordinate *utils.Coordinates) *So
 		coordinate.Longitude, solar.ApparentSiderealTime, solar.RightAscension,
 	)
 	solarAltitude := -50.0 / 60.0
-
 	transit := CorrectedTransit(
 		approximateTransit, coordinate.Longitude, solar.ApparentSiderealTime,
 		solar.RightAscension, prevSolar.RightAscension, nextSolar.RightAscension,

@@ -45,37 +45,37 @@ func (param *CalculationParameters) SetMethod(method CalculationMethod) *Calcula
 	return param
 }
 
-func (param *CalculationParameters) setFajrAngle(angle float32) *CalculationParameters {
+func (param *CalculationParameters) SetFajrAngle(angle float32) *CalculationParameters {
 	param.FajrAngle = angle
 	return param
 }
 
-func (param *CalculationParameters) setIshaAngle(angle float32) *CalculationParameters {
+func (param *CalculationParameters) SetIshaAngle(angle float32) *CalculationParameters {
 	param.IshaAngle = angle
 	return param
 }
 
-func (param *CalculationParameters) setIshaInterval(interval int8) *CalculationParameters {
+func (param *CalculationParameters) SetIshaInterval(interval int8) *CalculationParameters {
 	param.IshaInterval = interval
 	return param
 }
 
-func (param *CalculationParameters) setMazhab(mazhab Mazhab) *CalculationParameters {
+func (param *CalculationParameters) SetMazhab(mazhab Mazhab) *CalculationParameters {
 	param.Mazhab = mazhab
 	return param
 }
 
-func (param *CalculationParameters) setAjustment(ajustment PrayerAjustment) *CalculationParameters {
+func (param *CalculationParameters) SetAjustment(ajustment PrayerAjustment) *CalculationParameters {
 	param.Ajustment = ajustment
 	return param
 }
 
-func (param *CalculationParameters) setHighLatitudeRule(highLatitudeRule HighLatitudeRule) *CalculationParameters {
+func (param *CalculationParameters) SetHighLatitudeRule(highLatitudeRule HighLatitudeRule) *CalculationParameters {
 	param.HighLatitudeRule = highLatitudeRule
 	return param
 }
 
-func (param *CalculationParameters) setMethodAjustment(ajusment PrayerAjustment) *CalculationParameters {
+func (param *CalculationParameters) SetMethodAjustment(ajusment PrayerAjustment) *CalculationParameters {
 	param.MethodAjustment = ajusment
 	return param
 }
