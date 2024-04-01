@@ -7,6 +7,7 @@ import (
 )
 
 type PrayerTimes struct {
+	Imsak             time.Time
 	Fajr              time.Time
 	Sunrise           time.Time
 	Dhuhr             time.Time
@@ -130,6 +131,7 @@ func NewPrayerTimes(coords *utils.Coordinates, date *utils.DateComponents, param
 	)
 
 	return &PrayerTimes{
+		Imsak:             fajr.Add(-time.Minute * 10),
 		Fajr:              fajr,
 		Sunrise:           sunrise,
 		Dhuhr:             dhuhr,
@@ -155,6 +157,8 @@ func (prayer *PrayerTimes) CurrentPrayer() Prayer {
 		return DHUHR
 	case prayer.Fajr.Unix()-currentTime <= 0:
 		return FAJR
+	case prayer.Imsak.Unix()-currentTime <= 0:
+		return IMSAK
 	default:
 		return NO_PRAYER
 	}
@@ -167,6 +171,8 @@ func (prayer *PrayerTimes) NextPrayer() Prayer {
 
 func (pray *PrayerTimes) TimePray(prayer Prayer) time.Time {
 	switch prayer {
+	case IMSAK:
+		return pray.Imsak
 	case FAJR:
 		return pray.Fajr
 	case SUNRISE:
@@ -189,6 +195,7 @@ func (pray *PrayerTimes) SetTimeZone(tz string) error {
 	if err != nil {
 		return err
 	}
+	pray.Imsak = pray.Imsak.In(loc)
 	pray.Fajr = pray.Fajr.In(loc)
 	pray.Sunrise = pray.Sunrise.In(loc)
 	pray.Dhuhr = pray.Dhuhr.In(loc)

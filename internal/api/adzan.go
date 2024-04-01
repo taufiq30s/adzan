@@ -14,6 +14,7 @@ import (
 type adzanData struct {
 	Date     string `json:"date"`
 	HijrDate string `json:"hijrDate"`
+	Imsak    string `json:"imsak"`
 	Fajr     string `json:"fajr"`
 	Sunrise  string `json:"sunrise"`
 	Dhuhr    string `json:"dhuhr"`
@@ -106,6 +107,7 @@ func TodayAdzan(w http.ResponseWriter, r *http.Request) {
 			hijrMontName[int(hijrDate.Month)],
 			hijrDate.Year,
 		),
+		Imsak:   adzan.Imsak.Format("15:04"),
 		Fajr:    adzan.Fajr.Format("15:04"),
 		Sunrise: adzan.Sunrise.Format("15:04"),
 		Dhuhr:   adzan.Dhuhr.Format("15:04"),
@@ -177,6 +179,7 @@ func MonthlyAdzan(w http.ResponseWriter, r *http.Request) {
 				hijrMontName[int(hijrDate.Month)],
 				hijrDate.Year,
 			),
+			Imsak:   prayerTime.Imsak.Format("15:04"),
 			Fajr:    prayerTime.Fajr.Format("15:04"),
 			Sunrise: prayerTime.Sunrise.Format("15:04"),
 			Dhuhr:   prayerTime.Dhuhr.Format("15:04"),
