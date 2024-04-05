@@ -54,6 +54,8 @@ func getAdzanData(date *time.Time, coordinate *utils.Coordinates, timezone *util
 	param := calc.GetCalculationMethod(calc.MUSLIM_WORLD_LEAGUE).SetMazhab(calc.SYAFI)
 	if timezone.CountryCode == "ID" {
 		param = calc.GetCalculationMethod(calc.KEMENAG).SetMazhab(calc.SYAFI)
+	} else if timezone.CountryCode == "MY" || timezone.CountryCode == "SG" {
+		param = calc.GetCalculationMethod(calc.MUHAMMADIYAH).SetMazhab(calc.SYAFI)
 	}
 
 	adzan, err := calc.NewPrayerTimes(coordinate, utils.NewDateComponents(*date), param)
