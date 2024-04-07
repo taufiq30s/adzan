@@ -12,9 +12,10 @@ import (
 )
 
 type hijrData struct {
-	Date      string `json:"date"`
-	Formatted string `json:"formatted"`
-	Timezone  string `json:"timezone"`
+	GregorianDate string `json:"gregorianDate"`
+	HijrDate      string `json:"hijrDate"`
+	Formatted     string `json:"formatted"`
+	Timezone      string `json:"timezone"`
 }
 
 var monthName = map[int]string{
@@ -50,32 +51,59 @@ func convertCoordinateToFloat64(rawLat string, rawLng string) (*utils.Coordinate
 	return coordinate, nil
 }
 
-func ShowCurrentHijrDate(w http.ResponseWriter, r *http.Request) {
-	rawLat := r.URL.Query().Get("lat")
-	rawLng := r.URL.Query().Get("lng")
-	currentTime := time.Now().UTC()
+func setTimeBasedOnCoordinate(rawLat string, rawLng string, date time.Time) (time.Time, string, error) {
 	var currentTz string
-	w.Header().Set("Content-Type", "application/json")
 
 	if rawLat != "" && rawLng != "" {
 		coordinate, err := convertCoordinateToFloat64(rawLat, rawLng)
 		if err != nil {
-			http.Error(w, err.Error(), 400)
+			return time.Time{}, "", err
 		}
 
 		timezone, err := utils.GetTimeZone(coordinate.Latitude, coordinate.Longitude)
 		if err != nil {
-			http.Error(w, err.Error(), 400)
+			return time.Time{}, "", err
 		}
-		currentTime = time.Now().In(timezone)
+		date = date.In(timezone)
 		currentTz = timezone.String()
 	} else {
-		currentTz, _ = currentTime.Zone()
+		currentTz, _ = date.Zone()
 	}
-	hijrDate := calc.ConvertGeorgianToHijr(*utils.NewDateComponents(currentTime))
+	return date, currentTz, nil
+}
+
+func ShowCurrentHijrDate(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	rawLat := r.URL.Query().Get("lat")
+	rawLng := r.URL.Query().Get("lng")
+	var rawDate time.Time
+	var err error
+
+	if r.URL.Query().Get("date") != "" {
+		rawDate, err = time.Parse("2006-01-02", r.URL.Query().Get("date"))
+		if err != nil {
+			http.Error(w, "Invalid date format. Valid format (YYYY-MM-DD). Example: 2024-04-01", 400)
+			return
+		}
+	} else {
+		rawDate = time.Now().UTC()
+	}
+	date, currentTz, err := setTimeBasedOnCoordinate(rawLat, rawLng, rawDate)
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+	hijrDate := calc.ConvertGeorgianToHijr(*utils.NewDateComponents(date))
 
 	data := hijrData{
-		Date: fmt.Sprintf(
+		GregorianDate: fmt.Sprintf(
+			"%d-%d-%d",
+			date.Year(),
+			int(date.Month()),
+			date.Day(),
+		),
+		HijrDate: fmt.Sprintf(
 			"%v-%v-%v",
 			hijrDate.Year,
 			hijrDate.Month,
@@ -92,6 +120,7 @@ func ShowCurrentHijrDate(w http.ResponseWriter, r *http.Request) {
 	jsonData, err := json.Marshal(utils.SuccessResponse(data))
 	if err != nil {
 		http.Error(w, err.Error(), 500)
+		return
 	}
 	fmt.Fprint(w, string(jsonData))
 }
