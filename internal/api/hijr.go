@@ -61,14 +61,11 @@ func ShowCurrentHijrDate(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), 400)
 		}
 
-		timezone, statusCode, err := utils.GetTimeZone(coordinate.Latitude, coordinate.Longitude)
+		timezone, err := utils.GetTimeZone(coordinate.Latitude, coordinate.Longitude)
 		if err != nil {
-			http.Error(w, err.Error(), statusCode)
+			http.Error(w, err.Error(), 400)
 		}
-		currentTime, err = time.Parse("2006-01-02 15:04", timezone.Time)
-		if err != nil {
-			http.Error(w, err.Error(), statusCode)
-		}
+		currentTime = time.Now().In(timezone)
 	}
 	hijrDate := calc.ConvertGeorgianToHijr(*utils.NewDateComponents(currentTime))
 

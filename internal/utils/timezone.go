@@ -1,13 +1,10 @@
 package utils
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"os"
+	"time"
 
-	"github.com/joho/godotenv"
+	"github.com/ringsaturn/tzf"
 )
 
 type TimeZone struct {
@@ -17,64 +14,24 @@ type TimeZone struct {
 	CountryCode string `json:"countryCode"`
 }
 
-const uri string = "http://api.geonames.org/timezoneJSON?lat=%f&lng=%f&username=%s"
+var finder tzf.F
 
-func GetTimeZone(lat float64, lng float64) (timezone *TimeZone, statusCode int, err error) {
-	tzCh := make(chan *TimeZone)
-	errCh := make(chan error)
-	statusCodeCh := make(chan int)
-
+func init() {
+	var err error
 	defer catch(&err)
-
-	username, e := getUsername()
-	if e != nil {
-		return timezone, 500, e
-	}
-
-	url := fmt.Sprintf(uri, lat, lng, username)
-	go func() {
-		tz := TimeZone{}
-		res, e := http.Get(url)
-		if e != nil {
-			statusCodeCh <- res.StatusCode
-			errCh <- e
-			return
-		}
-		defer res.Body.Close()
-
-		raw, e := io.ReadAll(res.Body)
-		if e != nil {
-			statusCodeCh <- 500
-			errCh <- e
-			return
-		}
-
-		if e = json.Unmarshal(raw, &tz); e != nil {
-			statusCodeCh <- 500
-			errCh <- e
-			return
-		}
-
-		if len(tz.TimezoneId) == 0 {
-			statusCodeCh <- 404
-			errCh <- fmt.Errorf("error: Timezone not found")
-			return
-		}
-		tzCh <- &tz
-	}()
-	select {
-	case timezone = <-tzCh:
-		return timezone, 200, err
-	case err = <-errCh:
-		return timezone, <-statusCodeCh, err
+	finder, err = tzf.NewDefaultFinder()
+	if err != nil {
+		panic(err)
 	}
 }
 
-func getUsername() (string, error) {
-	if err := godotenv.Load(".env"); err != nil {
-		return "", err
+func GetTimeZone(lat float64, lng float64) (timezone *time.Location, err error) {
+	tzName := finder.GetTimezoneName(lat, lng)
+	tz, err := time.LoadLocation(tzName)
+	if err != nil {
+		return nil, err
 	}
-	return os.Getenv("GEOLOCATION_USERNAME"), nil
+	return tz, err
 }
 
 func catch(err *error) {
