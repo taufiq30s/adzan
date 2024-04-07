@@ -12,11 +12,12 @@ import (
 )
 
 type hijrData struct {
-	HijrDate          string `json:"hijrDate"`
-	FormattedHijrDate string `json:"formattedHijrDate"`
+	Date      string `json:"date"`
+	Formatted string `json:"formatted"`
+	Timezone  string `json:"timezone"`
 }
 
-var hijrMontName = map[int]string{
+var monthName = map[int]string{
 	1:  "Muharram",
 	2:  "Safar",
 	3:  "Rabiul Awal",
@@ -53,6 +54,7 @@ func ShowCurrentHijrDate(w http.ResponseWriter, r *http.Request) {
 	rawLat := r.URL.Query().Get("lat")
 	rawLng := r.URL.Query().Get("lng")
 	currentTime := time.Now().UTC()
+	var currentTz string
 	w.Header().Set("Content-Type", "application/json")
 
 	if rawLat != "" && rawLng != "" {
@@ -66,24 +68,26 @@ func ShowCurrentHijrDate(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), 400)
 		}
 		currentTime = time.Now().In(timezone)
+		currentTz = timezone.String()
+	} else {
+		currentTz, _ = currentTime.Zone()
 	}
 	hijrDate := calc.ConvertGeorgianToHijr(*utils.NewDateComponents(currentTime))
 
 	data := hijrData{
-		HijrDate: fmt.Sprintf(
-			"%v-%v-%v %v:%v",
+		Date: fmt.Sprintf(
+			"%v-%v-%v",
 			hijrDate.Year,
 			hijrDate.Month,
 			hijrDate.Day,
-			currentTime.Hour(),
-			currentTime.Minute(),
 		),
-		FormattedHijrDate: fmt.Sprintf(
-			"%v %v %v",
+		Formatted: fmt.Sprintf(
+			"%v %v %v H",
 			hijrDate.Day,
-			hijrMontName[int(hijrDate.Month)],
+			monthName[int(hijrDate.Month)],
 			hijrDate.Year,
 		),
+		Timezone: currentTz,
 	}
 	jsonData, err := json.Marshal(utils.SuccessResponse(data))
 	if err != nil {

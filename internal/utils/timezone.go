@@ -26,7 +26,7 @@ func init() {
 }
 
 func GetTimeZone(lat float64, lng float64) (timezone *time.Location, err error) {
-	tzName := finder.GetTimezoneName(lat, lng)
+	tzName := finder.GetTimezoneName(lng, lat)
 	tz, err := time.LoadLocation(tzName)
 	if err != nil {
 		return nil, err
